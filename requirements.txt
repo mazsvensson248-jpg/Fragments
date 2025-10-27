@@ -1,3 +1,6 @@
 gradio
 moviepy
 imageio[ffmpeg]
+pytube
+gTTS
+git+https://github.com/openai/whisper.git
