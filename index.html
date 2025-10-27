@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FRAGMENTS — AI Video Generator (Mock Frontend)</title>
+  <style>
+    :root{
+      --bg:#0f0f0f;
+      --card:#121212;
+      --muted:#9aa0a6;
+      --accent:#36b3ff;
+      --white:#ffffff;
+      --radius:12px;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%; margin:0;}
+    body{
+      background:var(--bg);
+      color:var(--white);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:40px 20px;
+    }
+
+    .container{width:100%; max-width:920px;}
+    header{text-align:center; margin-bottom:36px;}
+    .brand{font-size:64px; font-weight:700; color:var(--accent); letter-spacing:1px; margin:0;}
+    .tagline{color:var(--muted); font-size:20px; margin-top:8px; line-height:1.4;}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:28px;
+      margin-top:14px;
+      box-shadow:0 6px 30px rgba(0,0,0,0.6);
+    }
+    .section-title{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+    .section-title h2{margin:0;font-size:28px;}
+    label[for="prompt-input"]{display:block; font-weight:600; margin-bottom:8px; color:var(--muted);}
+    textarea#prompt-input{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      background:transparent;
+      border-radius:10px;
+      border:2px solid rgba(255,255,255,0.06);
+      padding:18px;
+      color:var(--white);
+      font-size:18px;
+      outline:none;
+      box-sizing:border-box;
+    }
+    .youtube-list{margin-top:22px;}
+    .youtube-list h3{color:var(--muted);margin:0 0 12px 0;}
+    .checkbox-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:14px 28px;
+      align-items:center;
+    }
+    .checkbox-item{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      font-size:22px;
+      color:var(--white);
+    }
+    .checkbox-item input[type=checkbox]{width:28px;height:28px;border-radius:6px; cursor:pointer;}
+    .actions{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      margin-top:26px;
+    }
+    .btn{
+      background:var(--white);
+      color:var(--bg);
+      padding:10px 18px;
+      border-radius:8px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,0.5);
+    }
+    .btn.secondary{
+      background:transparent;
+      border:2px solid rgba(255,255,255,0.06);
+      color:var(--white);
+    }
+    .powered{
+      text-align:center;
+      color:rgba(255,255,255,0.16);
+      margin-top:36px;
+      font-size:20px;
+    }
+    @media (max-width:640px){
+      .brand{font-size:44px;}
+      .checkbox-grid{grid-template-columns:1fr;}
+      .checkbox-item{font-size:20px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="brand">FRAGMENTS</h1>
+      <p class="tagline">Harness the power of AI to create, generate, and innovate. Your creative journey starts here.</p>
+    </header>
+
+    <div class="card" role="region" aria-labelledby="genTitle">
+      <div class="section-title">
+        <span style="font-size:28px;">🎬</span>
+        <h2 id="genTitle">AI Video Generator</h2>
+      </div>
+
+      <div>
+        <label for="prompt-input">Enter your prompt:</label>
+        <textarea id="prompt-input" placeholder="Write your story..."></textarea>
+      </div>
+
+      <div class="youtube-list">
+        <h3>Select up to 10 YouTube video links:</h3>
+        <div class="checkbox-grid" id="checkboxGrid">
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/tCBOhczn6Ok?si=93Raull0mISyCHlM"> Video 1</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/-LZceM7L8AE?si=quSAxvm1EBdYrhpO"> Video 2</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/7mTTdWTw5p0?si=9aHv2BKb07kQwg31"> Video 3</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/_A3po0HYwkY?si=OBRe8T7t2skx-Hgj"> Video 4</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/-yPjP85CbQE?si=B2xFUbgkHm_yG0oO"> Video 5</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/_-2ZUciZgls?si=7r6j2XUlHLfESBDw"> Video 6</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/t_r-ST06jR4?si=tkf269LBvkdtzrOY"> Video 7</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/s600FYgI5-s?si=btvQzZvtWdpDnhIS"> Video 8</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/952ILTHDgC4?si=ybUc_C2GSKmjGt0K"> Video 9</label>
+          <label class="checkbox-item"><input type="checkbox" name="video" value="https://youtu.be/u7kdVe8q5zs?si=E9nOzi4sZF8NLAus"> Video 10</label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn" class="btn">Generate</button>
+        <button id="backBtn" class="btn secondary">← Back</button>
+        <div style="margin-left:auto;color:var(--muted);font-weight:600">Selected: <span id="count">0</span>/10</div>
+      </div>
+    </div>
+
+    <div class="powered">Powered by FRAGMENTS AI technology</div>
+  </div>
+
+  <script>
+    (function(){
+      const checkboxes = Array.from(document.querySelectorAll('input[name="video"]'));
+      const maxAllowed = 10;
+      const countEl = document.getElementById('count');
+      const generateBtn = document.getElementById('generateBtn');
+      const backBtn = document.getElementById('backBtn');
+      const promptInput = document.getElementById('prompt-input');
+
+      function updateCount(){
+        const selected = checkboxes.filter(c => c.checked).length;
+        countEl.textContent = selected;
+        checkboxes.forEach(c => c.disabled = !c.checked && selected >= maxAllowed);
+      }
+
+      checkboxes.forEach(cb => cb.addEventListener('change', updateCount));
+
+      generateBtn.addEventListener('click', async ()=>{
+        const prompt = promptInput.value.trim();
+        const selectedLinks = checkboxes.filter(c=>c.checked).map(c=>c.value);
+
+        if(!prompt){
+          alert('Please enter a prompt for the video generator.');
+          promptInput.focus();
+          return;
+        }
+
+        if(selectedLinks.length === 0){
+          if(!confirm('You have not selected any YouTube videos. Continue without links?')) return;
+        }
+
+        const payload = {
+          prompt,
+          videoLinks:selectedLinks,
+          timestamp:new Date().toISOString()
+        };
+
+        console.log('Generate payload:', payload);
+        alert('Generate request created. Check console for payload (mock).');
+      });
+
+      backBtn.addEventListener('click', ()=>{
+        if(window.history.length>1) window.history.back(); else window.location.href='/';
+      });
+
+      updateCount();
+    })();
+  </script>
+</body>
+  </html>
