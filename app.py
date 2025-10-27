@@ -1,89 +1,50 @@
+import gradio as gr
 import os
-import re
-from flask import Flask, request, send_file, render_template
-import whisper
+from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 import tempfile
 
-app = Flask(__name__)
+# Mock video generator function
+def generate_video(prompt, voice_file):
+    try:
+        # Step 1: Pick a stock video from local folder or URL (mock)
+        # For Hugging Face demo, we'll use a placeholder clip
+        video_path = "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
 
-# Load Whisper tiny once (fits free plan RAM)
-model = whisper.load_model("tiny")
+        # Step 2: Download temp video
+        temp_video = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+        os.system(f"wget -q -O {temp_video.name} {video_path}")
 
-def clean_for_ffmpeg(text):
-    return re.sub(r"[^a-zA-Z0-9,.?! ]", "", text)
+        # Step 3: Add user voice file to video
+        video = VideoFileClip(temp_video.name)
+        voice = AudioFileClip(voice_file)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+        # Ensure duration fits
+        min_duration = min(video.duration, voice.duration)
+        video = video.subclip(0, min_duration)
+        voice = voice.subclip(0, min_duration)
 
-@app.route("/generate", methods=["POST"])
-def generate_video():
-    """
-    Expects multipart/form-data:
-    - video: .mp4
-    - voice: .mp3 (required)
-    - music: .mp3 (optional)
-    - text: optional prompt
-    """
-    files = request.files
-    video_file = files.get("video")
-    voice_file = files.get("voice")  # required
-    music_file = files.get("music")
-    text = request.form.get("text", "")
+        # Combine
+        final = video.set_audio(voice)
 
-    if not video_file or not voice_file:
-        return "❌ Video and voice files are required", 400
+        # Step 4: Save final video
+        output_path = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4").name
+        final.write_videofile(output_path, codec="libx264", audio_codec="aac", fps=24, bitrate="1M")
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        video_path = os.path.join(tmpdir, "video.mp4")
-        video_file.save(video_path)
+        return output_path
+    except Exception as e:
+        return f"Error: {e}"
 
-        voice_path = os.path.join(tmpdir, "voice.mp3")
-        voice_file.save(voice_path)
-
-        # Transcribe with Whisper tiny
-        result = model.transcribe(voice_path, word_timestamps=True, language="en")
-        segments = result["segments"]
-
-        # Build drawtext filters with default Courier font
-        filters = ""
-        font_part = "font='Courier':"
-
-        for segment in segments:
-            for word_info in segment.get("words", []):
-                word = clean_for_ffmpeg(word_info["word"])
-                start = word_info["start"]
-                end = word_info["end"]
-                filters += (
-                    f"drawtext={font_part}text='{word}':"
-                    f"fontsize=48:fontcolor=white:bordercolor=black:borderw=2:"
-                    f"x=(w-text_w)/2:y=(h-text_h)/2:"
-                    f"enable='between(t,{start},{end})',"
-                )
-        filters = filters.rstrip(",")
-
-        # Mix audio if music provided
-        if music_file:
-            music_path = os.path.join(tmpdir, "music.mp3")
-            music_file.save(music_path)
-            mixed_audio = os.path.join(tmpdir, "mixed_audio.mp3")
-            os.system(f"""ffmpeg -y -i "{voice_path}" -i "{music_path}" \
--filter_complex "[1:a]volume=0.3[a1];[0:a][a1]amix=inputs=2:duration=first:dropout_transition=3" \
--c:a aac -b:a 192k "{mixed_audio}" """)
-            audio_input = mixed_audio
-        else:
-            audio_input = voice_path
-
-        # Render final 720p video
-        output_file = os.path.join(tmpdir, "final_video_720p.mp4")
-        cmd = f"""ffmpeg -y -i "{video_path}" -i "{audio_input}" \
--vf "scale=1280:720,{filters}" -map 0:v -map 1:a \
--c:v libx264 -c:a aac -shortest "{output_file}" """
-        exit_code = os.system(cmd)
-        if exit_code != 0 or not os.path.exists(output_file):
-            return "❌ Failed to create video", 500
-
-        return send_file(output_file, as_attachment=True)
+# Gradio UI
+demo = gr.Interface(
+    fn=generate_video,
+    inputs=[
+        gr.Textbox(label="🎬 Video Prompt", placeholder="Describe your video idea..."),
+        gr.Audio(label="🎤 Upload Voice File", type="filepath"),
+    ],
+    outputs=gr.Video(label="📽️ Generated Video"),
+    title="FRAGMENTS — AI Video Generator",
+    description="Upload your voice and write a prompt to generate a 720p video clip.",
+)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    demo.launch()
