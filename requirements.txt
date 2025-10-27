@@ -1,4 +1,3 @@
-flask
-gTTS
+Flask==2.3.6
+gTTS==2.3.2
 git+https://github.com/openai/whisper.git
-ffmpeg-python
