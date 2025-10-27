@@ -1,0 +1,4 @@
+flask
+gTTS
+git+https://github.com/openai/whisper.git
+ffmpeg-python
